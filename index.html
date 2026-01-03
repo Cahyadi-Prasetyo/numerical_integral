@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integral Numerik - Kalkulator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Math.js for parsing functions -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <span class="navbar-logo">∫</span>
+            <span class="navbar-title">IntegralNumerik</span>
+        </div>
+        <div class="navbar-menu">
+            <a href="#" class="nav-link active" data-page="calculator">Kalkulator</a>
+            <a href="#" class="nav-link" data-page="theory">Teori</a>
+            <a href="#" class="nav-link" data-page="about">Tentang</a>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+            <span class="theme-icon sun">☀️</span>
+            <span class="theme-icon moon">🌙</span>
+        </button>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">METODE INTEGRASI</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="sidebar-link active" data-method="trapezoidal">
+                    <span class="method-icon">◫</span>
+                    Aturan Trapesium
+                </a>
+            </li>
+            <li>
+                <a href="#" class="sidebar-link" data-method="simpson13">
+                    <span class="method-icon">∿</span>
+                    Simpson 1/3
+                </a>
+            </li>
+            <li>
+                <a href="#" class="sidebar-link" data-method="simpson38">
+                    <span class="method-icon">∿</span>
+                    Simpson 3/8
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-divider"></div>
+        <a href="#" class="sidebar-link compare-btn" data-method="compare">
+            <span class="method-icon">Σ</span>
+            Bandingkan Semua
+        </a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Calculator Page -->
+        <div class="page active" id="calculatorPage">
+            <h1 class="page-title">Integral Numerik</h1>
+            
+            <!-- Input Section -->
+            <section class="card input-section">
+                <div class="function-input-wrapper">
+                    <input type="text" 
+                           id="functionInput" 
+                           class="function-input" 
+                           placeholder="Masukkan fungsi f(x)... contoh: x^2, sin(x), e^x"
+                           autocomplete="off">
+                    <div class="function-preview" id="functionPreview"></div>
+                    <button class="keyboard-toggle" id="keyboardToggle" title="Keyboard Matematika">
+                        <span>⌨</span>
+                    </button>
+                    <span class="dx-symbol">dx</span>
+                    <button class="btn btn-primary" id="calculateBtn">HITUNG</button>
+                </div>
+                
+                <div class="bounds-inputs">
+                    <div class="input-group">
+                        <label for="lowerBound">Batas Bawah (a)</label>
+                        <input type="number" id="lowerBound" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="upperBound">Batas Atas (b)</label>
+                        <input type="number" id="upperBound" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="partitions">Jumlah Pias (N) <small>(Opsional)</small></label>
+                        <input type="number" id="partitions" value="0" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="exactValue">Nilai Eksak <small>(Opsional)</small></label>
+                        <input type="number" id="exactValue" placeholder="Masukkan jika diketahui" step="any">
+                    </div>
+                </div>
+
+                <!-- Preset Functions -->
+                <div class="preset-functions">
+                    <span class="preset-label">Preset:</span>
+                    <button class="preset-btn" data-function="x^2">x²</button>
+                    <button class="preset-btn" data-function="x^3">x³</button>
+                    <button class="preset-btn" data-function="sin(x)">sin(x)</button>
+                    <button class="preset-btn" data-function="cos(x)">cos(x)</button>
+                    <button class="preset-btn" data-function="e^x">eˣ</button>
+                    <button class="preset-btn" data-function="1/x">1/x</button>
+                    <button class="preset-btn" data-function="sqrt(x)">√x</button>
+                    <button class="preset-btn" data-function="log(x)">ln(x)</button>
+                </div>
+            </section>
+
+            <!-- Math Keyboard -->
+            <div class="math-keyboard" id="mathKeyboard">
+                <div class="keyboard-row">
+                    <button class="key" data-insert="x">x</button>
+                    <button class="key" data-insert="n">n</button>
+                    <button class="key" data-insert="7">7</button>
+                    <button class="key" data-insert="8">8</button>
+                    <button class="key" data-insert="9">9</button>
+                    <button class="key" data-insert="/">÷</button>
+                    <button class="key" data-insert="e">e</button>
+                    <button class="key" data-insert="i">i</button>
+                    <button class="key" data-insert="pi">π</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-insert="<">&lt;</button>
+                    <button class="key" data-insert=">">&gt;</button>
+                    <button class="key" data-insert="4">4</button>
+                    <button class="key" data-insert="5">5</button>
+                    <button class="key" data-insert="6">6</button>
+                    <button class="key" data-insert="*">×</button>
+                    <button class="key" data-insert="^2">x²</button>
+                    <button class="key" data-insert="^">xⁿ</button>
+                    <button class="key" data-insert="sqrt(">√</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-insert="(">(</button>
+                    <button class="key" data-insert=")">)</button>
+                    <button class="key" data-insert="1">1</button>
+                    <button class="key" data-insert="2">2</button>
+                    <button class="key" data-insert="3">3</button>
+                    <button class="key" data-insert="-">−</button>
+                    <button class="key" data-insert="sin(">sin</button>
+                    <button class="key" data-insert="cos(">cos</button>
+                    <button class="key key-backspace" data-action="backspace">⌫</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key key-wide" data-insert=" ">Space</button>
+                    <button class="key" data-insert="0">0</button>
+                    <button class="key" data-insert=".">.</button>
+                    <button class="key" data-insert="+">+</button>
+                    <button class="key" data-insert="tan(">tan</button>
+                    <button class="key" data-insert="log(">ln</button>
+                    <button class="key key-enter" data-action="enter">↵</button>
+                </div>
+            </div>
+
+            <!-- Graph Visualization -->
+            <section class="card graph-section">
+                <h2 class="section-title">Visualisasi Grafik</h2>
+                <div class="graph-container">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+                <div class="graph-legend" id="graphLegend"></div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="card results-section" id="resultsSection" style="display: none;">
+                <h2 class="section-title">Hasil Perhitungan</h2>
+                <div class="results-summary" id="resultsSummary"></div>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Metode</th>
+                            <th>Hasil</th>
+                            <th>Nilai Eksak</th>
+                            <th>Error Absolut</th>
+                            <th>Error Relatif (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Step by Step Section -->
+            <section class="card steps-section" id="stepsSection" style="display: none;">
+                <h2 class="section-title">Langkah Perhitungan</h2>
+                <div class="steps-accordion" id="stepsAccordion"></div>
+            </section>
+        </div>
+
+        <!-- Theory Page -->
+        <div class="page" id="theoryPage">
+            <h1 class="page-title">Teori Integral Numerik</h1>
+            
+            <section class="card theory-section">
+                <h2>Apa itu Integral Numerik?</h2>
+                <p>Integral numerik adalah teknik untuk menghitung nilai integral tentu secara aproksimasi. Metode ini digunakan ketika:</p>
+                <ul>
+                    <li>Tidak ada solusi analitik (antiturunan) yang tersedia</li>
+                    <li>Fungsi hanya berupa data diskrit</li>
+                    <li>Solusi analitik terlalu rumit untuk dihitung</li>
+                </ul>
+                <div class="formula-box">
+                    <p>Secara geometris, integral tentu adalah luas area di bawah kurva:</p>
+                    <div class="math-formula" id="theoryFormula1">$$\int_a^b f(x) \, dx \approx \sum_{i=0}^{n-1} A_i$$</div>
+                </div>
+            </section>
+
+            <section class="card theory-section">
+                <h2>Metode-Metode Integrasi</h2>
+                
+                <div class="method-theory" id="theory-trapezoidal">
+                    <h3>Aturan Trapesium</h3>
+                    <p>Mengaproksimasi area dengan trapesium. Order error: O(h²)</p>
+                    <div class="formula-box">
+                        <div class="math-formula">$$\int_a^b f(x) \, dx \approx \frac{h}{2} \left[ f(x_0) + 2\sum_{i=1}^{n-1} f(x_i) + f(x_n) \right]$$</div>
+                    </div>
+                </div>
+
+                <div class="method-theory" id="theory-simpson13">
+                    <h3>Simpson 1/3</h3>
+                    <p>Mengaproksimasi dengan parabola (polinomial orde 2). Order error: O(h⁴)</p>
+                    <div class="formula-box">
+                        <div class="math-formula">$$\int_a^b f(x) \, dx \approx \frac{h}{3} \left[ f(x_0) + 4\sum_{i=1,3,5...}^{n-1} f(x_i) + 2\sum_{i=2,4,6...}^{n-2} f(x_i) + f(x_n) \right]$$</div>
+                    </div>
+                </div>
+
+                <div class="method-theory" id="theory-simpson38">
+                    <h3>Simpson 3/8</h3>
+                    <p>Mengaproksimasi dengan polinomial orde 3. Order error: O(h⁴)</p>
+                    <div class="formula-box">
+                        <div class="math-formula">$$\int_a^b f(x) \, dx \approx \frac{3h}{8} \left[ f(x_0) + 3f(x_1) + 3f(x_2) + 2f(x_3) + ... + f(x_n) \right]$$</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card theory-section">
+                <h2>Perbandingan Akurasi Metode</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Metode</th>
+                            <th>Order Error</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Trapesium</td>
+                            <td>O(h²)</td>
+                            <td>Akurasi rendah, sederhana</td>
+                        </tr>
+                        <tr>
+                            <td>Simpson 1/3</td>
+                            <td>O(h⁴)</td>
+                            <td>Akurasi tinggi, butuh n genap</td>
+                        </tr>
+                        <tr>
+                            <td>Simpson 3/8</td>
+                            <td>O(h⁴)</td>
+                            <td>Akurasi tinggi, butuh n kelipatan 3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- About Page -->
+        <div class="page" id="aboutPage">
+            <h1 class="page-title">Tentang IntegralNumerik</h1>
+            
+            <section class="card about-intro">
+                <p>Aplikasi ini dikembangkan sebagai bagian dari <strong>Tugas Besar</strong> mata kuliah <strong>Metode Numerik</strong>. Tujuannya adalah membantu mahasiswa dan pelajar dalam memahami serta menghitung integrasi numerik dengan metode Trapesium dan Simpson.</p>
+            </section>
+
+            <section class="card">
+                <h2 class="team-title">Tim Pengembang</h2>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="team-name">Cahyadi Prasetyo</h3>
+                        <p class="team-nim">NIM: 2301020005</p>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="team-name">Rusydi Ardani</h3>
+                        <p class="team-nim">NIM: 2301020037</p>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="team-name">Ezzy Auriel Syach Lie</h3>
+                        <p class="team-nim">NIM: 2301020011</p>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="team-name">Syawal Rizal Utama</h3>
+                        <p class="team-nim">NIM: 2301020008</p>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3 class="team-name">Azmi Novi Athaya</h3>
+                        <p class="team-nim">NIM: 2301020001</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>© 2025 Semester 5 - Metode Numerik | Kelompok Metnum</p>
+        </div>
+    </footer>
+
+    <script src="js/calculator.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
