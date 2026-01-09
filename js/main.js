@@ -528,11 +528,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <strong>Partisi (n):</strong> ${n}
         `;
         if (exactValue !== null) {
-            const exactLabel = isEstimatedExact ? 'Exact Value (Estimated)' : 'Exact Value';
+            const exactLabel = isEstimatedExact ? 'Nilai Eksak (Estimasi)' : 'Nilai Eksak';
             summaryHTML += ` &nbsp;&nbsp;<strong>${exactLabel}:</strong> ${exactValue.toFixed(10)}`;
         }
         if (isEstimatedExact) {
-            summaryHTML += `<br><small style="color: var(--text-secondary); font-style: italic;">⚠️ Exact value estimated using Simpson method with N=10000</small>`;
+            summaryHTML += `<br><small style="color: var(--text-secondary); font-style: italic;">⚠️ Nilai eksak diestimasi menggunakan metode Simpson dengan N=10000</small>`;
         }
         elements.resultsSummary.innerHTML = summaryHTML;
 
