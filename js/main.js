@@ -408,9 +408,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Untuk fungsi custom tanpa nilai eksak
             steps.push({
-                title: 'Perhitungan Error',
-                desc: '',
-                html: '<p class="error-note"><em>⚠️ Nilai eksak tidak diketahui. Lihat kesimpulan di bawah tabel untuk perbandingan antar metode.</em></p>'
+                title: 'Step 5: Error Calculation (Validation)',
+                desc: 'Compare numerical result with True Value.',
+                html: '<p class="error-note"><em>⚠️ True value is unknown. See conclusion below the table for method comparison.</em></p>'
             });
         }
 
@@ -486,28 +486,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const relError = (absError / Math.abs(exactValue)) * 100;
             
             steps.push({
-                title: 'Langkah 5: Perhitungan Error (Validasi)',
-                desc: 'Bandingkan hasil numerik dengan Nilai Sejati (Dihitung Simbolik).',
-                formula: `\\text{Nilai Sejati (Sejati)} \\approx ${exactValue.toFixed(10)}`
+                title: 'Step 5: Error Calculation (Validation)',
+                desc: 'Compare numerical result with True Value.',
+                formula: `\\text{True Value} \\approx ${exactValue.toFixed(10)}`
             });
             
             steps.push({
                 title: '',
                 desc: '',
-                formula: `\\text{Error Mutlak} = |\\text{Sejati} - \\text{Hampiran}| = |${exactValue.toFixed(6)} - ${calcResult.result.toFixed(6)}| = ${absError.toFixed(10)}`
+                formula: `\\text{Absolute Error} = |\\text{True} - \\text{Approx}| = |${exactValue.toFixed(6)} - ${calcResult.result.toFixed(6)}| = ${absError.toFixed(10)}`
             });
             
             steps.push({
                 title: '',
                 desc: '',
-                formula: `\\text{Error Relatif} = \\left| \\frac{\\text{Error Mutlak}}{\\text{Sejati}} \\right| \\times 100\\% = ${relError.toFixed(6)}\\%`
+                formula: `\\text{Relative Error} = \\left| \\frac{\\text{Absolute Error}}{\\text{True}} \\right| \\times 100\\% = ${relError.toFixed(6)}\\%`
             });
         } else {
             // Untuk fungsi custom tanpa nilai eksak yang diketahui
             steps.push({
-                title: 'Langkah 5: Perhitungan Error (Validasi)',
-                desc: 'Bandingkan hasil numerik dengan Nilai Sejati.',
-                html: '<p class="error-note"><em>⚠️ Nilai eksak tidak diketahui untuk fungsi ini. Untuk menghitung error, gunakan fungsi preset atau hitung nilai eksak secara manual.</em></p>'
+                title: 'Step 5: Error Calculation (Validation)',
+                desc: 'Compare numerical result with True Value.',
+                html: '<p class="error-note"><em>⚠️ True value is unknown for this function. Use preset functions or enter exact value manually.</em></p>'
             });
         }
 
@@ -528,11 +528,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <strong>Partisi (n):</strong> ${n}
         `;
         if (exactValue !== null) {
-            const exactLabel = isEstimatedExact ? 'Nilai Eksak (Estimasi)' : 'Nilai Eksak';
+            const exactLabel = isEstimatedExact ? 'Exact Value (Estimated)' : 'Exact Value';
             summaryHTML += ` &nbsp;&nbsp;<strong>${exactLabel}:</strong> ${exactValue.toFixed(10)}`;
         }
         if (isEstimatedExact) {
-            summaryHTML += `<br><small style="color: var(--text-secondary); font-style: italic;">⚠️ Nilai eksak diestimasi menggunakan metode Simpson dengan N=10000</small>`;
+            summaryHTML += `<br><small style="color: var(--text-secondary); font-style: italic;">⚠️ Exact value estimated using Simpson method with N=10000</small>`;
         }
         elements.resultsSummary.innerHTML = summaryHTML;
 
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             `).join('')}
                         </div>
                         <p class="conclusion-note">
-                            <em>⚠️ Nilai eksak tidak diketahui untuk fungsi ini. Hasil di atas menunjukkan 
+                            <em>⚠️ True value is unknown for this function. Results above show 
                             perbandingan nilai dari setiap metode. Umumnya, metode Simpson memberikan 
                             hasil yang lebih akurat dibanding Trapesium.</em>
                         </p>
