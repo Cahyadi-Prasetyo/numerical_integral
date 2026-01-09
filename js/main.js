@@ -408,8 +408,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Untuk fungsi custom tanpa nilai eksak
             steps.push({
-                title: 'Step 5: Error Calculation (Validation)',
-                desc: 'Compare numerical result with True Value.',
+                title: 'Step 5: Perhitungan Error (Validasi)',
+                desc: 'Bandingkan hasil numerik dengan True Value.',
                 html: '<p class="error-note"><em>⚠️ True value is unknown. See conclusion below the table for method comparison.</em></p>'
             });
         }
