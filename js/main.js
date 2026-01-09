@@ -269,13 +269,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const f = validation.f;
         
-        // Check for manual exact value first, then use preset
+        // Check for manual exact value first, then preset, then estimate
         const manualExactValue = elements.exactValueInput.value.trim();
         let exactValue;
+        let isEstimatedExact = false;
+        
         if (manualExactValue !== '' && !isNaN(parseFloat(manualExactValue))) {
+            // Manual input
             exactValue = parseFloat(manualExactValue);
         } else {
+            // Try preset
             exactValue = Calculator.getExactValue(funcStr, a, b);
+            
+            // If no preset, estimate using high-N Simpson
+            if (exactValue === null) {
+                exactValue = Calculator.estimateExactValue(f, a, b);
+                isEstimatedExact = true;
+            }
         }
 
         // Show loading state
@@ -289,21 +299,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (currentMethod === 'compare') {
                     // Compare all methods
                     results = Calculator.compareAll(f, a, b, n, exactValue);
-                    displayResults(results, funcStr, a, b, n, exactValue);
+                    displayResults(results, funcStr, a, b, n, exactValue, isEstimatedExact);
                     Visualizer.drawComparison(f, a, b, n);
                 } else {
                     // Single method
                     let calcResult;
                     switch (currentMethod) {
-                        case 'riemann-left':
-                            calcResult = Calculator.riemannLeft(f, a, b, n);
-                            break;
-                        case 'riemann-right':
-                            calcResult = Calculator.riemannRight(f, a, b, n);
-                            break;
-                        case 'riemann-mid':
-                            calcResult = Calculator.riemannMidpoint(f, a, b, n);
-                            break;
+                        // case 'riemann-left':
+                        //     calcResult = Calculator.riemannLeft(f, a, b, n);
+                        //     break;
+                        // case 'riemann-right':
+                        //     calcResult = Calculator.riemannRight(f, a, b, n);
+                        //     break;
+                        // case 'riemann-mid':
+                        //     calcResult = Calculator.riemannMidpoint(f, a, b, n);
+                        //     break;
                         case 'trapezoidal':
                             calcResult = Calculator.trapezoidal(f, a, b, n);
                             break;
@@ -313,9 +323,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         case 'simpson38':
                             calcResult = Calculator.simpson38(f, a, b, n);
                             break;
-                        case 'romberg':
-                            calcResult = Calculator.romberg(f, a, b, 4);
-                            break;
+                        // case 'romberg':
+                        //     calcResult = Calculator.romberg(f, a, b, 4);
+                        //     break;
                         default:
                             calcResult = Calculator.trapezoidal(f, a, b, n);
                     }
@@ -340,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         relError: exactValue !== null ? (Math.abs(calcResult.result - exactValue) / Math.abs(exactValue)) * 100 : null
                     }];
 
-                    displayResults(results, funcStr, a, b, n, exactValue);
+                    displayResults(results, funcStr, a, b, n, exactValue, isEstimatedExact);
                     Visualizer.draw(f, a, b, n, currentMethod);
                 }
             } catch (e) {
@@ -507,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =====================================================
     // DISPLAY RESULTS
     // =====================================================
-    function displayResults(results, funcStr, a, b, n, exactValue) {
+    function displayResults(results, funcStr, a, b, n, exactValue, isEstimatedExact = false) {
         // Show sections
         elements.resultsSection.style.display = 'block';
         elements.stepsSection.style.display = 'block';
@@ -518,7 +528,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <strong>Partisi (n):</strong> ${n}
         `;
         if (exactValue !== null) {
-            summaryHTML += ` &nbsp;&nbsp;<strong>Nilai Eksak:</strong> ${exactValue.toFixed(10)}`;
+            const exactLabel = isEstimatedExact ? 'Nilai Eksak (Estimasi)' : 'Nilai Eksak';
+            summaryHTML += ` &nbsp;&nbsp;<strong>${exactLabel}:</strong> ${exactValue.toFixed(10)}`;
+        }
+        if (isEstimatedExact) {
+            summaryHTML += `<br><small style="color: var(--text-secondary); font-style: italic;">⚠️ Nilai eksak diestimasi menggunakan metode Simpson dengan N=10000</small>`;
         }
         elements.resultsSummary.innerHTML = summaryHTML;
 

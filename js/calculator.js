@@ -427,6 +427,25 @@ const Calculator = {
         }
         
         return null;
+    },
+
+    // =====================================================
+    // ESTIMATE EXACT VALUE (for any function using high-N Simpson)
+    // =====================================================
+    estimateExactValue: function(f, a, b) {
+        // Use Simpson 1/3 with very high N for best approximation
+        const N_HIGH = 10000;
+        const h = (b - a) / N_HIGH;
+        
+        let sum = f(a) + f(b);
+        
+        for (let i = 1; i < N_HIGH; i++) {
+            const xi = a + i * h;
+            const coeff = (i % 2 === 0) ? 2 : 4;
+            sum += coeff * f(xi);
+        }
+        
+        return (h / 3) * sum;
     }
 };
 
